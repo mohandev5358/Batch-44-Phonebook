@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phonebook App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Phonebook Application</h2>
+
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="text" id="phone" placeholder="Enter Phone">
+        <input type="email" id="email" placeholder="Enter Email">
+
+        <button onclick="addContact()">Add Contact</button>
+
+        <br><br>
+
+        <input type="text" id="search" placeholder="Search by name" onkeyup="searchContact()">
+
+        <ul id="contactList"></ul>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

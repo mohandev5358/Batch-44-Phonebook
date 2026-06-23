@@ -1,0 +1,95 @@
+:root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --accent:#3b82f6;
+    --muted:#6b7280;
+    --radius:10px;
+}
+
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #EEAECA;
+background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+    color:#111827;
+    -webkit-font-smoothing:antialiased;
+}
+
+.container{
+    max-width:480px;
+    margin:48px auto;
+    background:var(--card);
+    padding:24px;
+    border-radius:var(--radius);
+    box-shadow:0 6px 20px rgba(17,24,39,0.06);
+}
+
+.container h2{
+    margin:0 0 12px 0;
+    font-size:20px;
+    font-weight:600;
+}
+
+input[type="text"], input[type="email"]{
+    width:100%;
+    padding:12px 14px;
+    margin-top:10px;
+    border:1px solid #e6e9ef;
+    border-radius:8px;
+    background:#fff;
+    outline:none;
+    transition:box-shadow .12s, border-color .12s;
+}
+
+input[type="text"]::placeholder, input[type="email"]::placeholder{
+    color:var(--muted);
+}
+
+input[type="text"]:focus, input[type="email"]:focus{
+    border-color:rgba(59,130,246,0.6);
+    box-shadow:0 0 0 4px rgba(59,130,246,0.08);
+}
+
+button{
+    display:inline-block;
+    width:100%;
+    padding:12px 16px;
+    margin-top:12px;
+    border-radius:8px;
+    border:0;
+    background:var(--accent);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .06s ease, box-shadow .06s ease;
+}
+
+button:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,0.12)}
+
+.search-row{margin-top:14px}
+
+ul#contactList{padding:0;margin:14px 0 0 0}
+
+li.contact-item{
+    background:#fbfdff;
+    border:1px solid #eef2ff;
+    margin-top:10px;
+    padding:12px;
+    border-radius:8px;
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.contact-meta{display:flex;flex-direction:column}
+.contact-name{font-weight:600}
+.contact-phone{font-size:13px;color:var(--muted)}
+
+.actions{display:flex;gap:8px}
+.actions button{width:auto;padding:8px 10px;border-radius:6px;background:#eef2ff;color:var(--accent);font-weight:600}
+
+@media (max-width:520px){
+    .container{margin:20px;padding:16px}
+}

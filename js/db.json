@@ -1,0 +1,26 @@
+{
+  "contacts": [
+    {
+      "name": "Mohan Raj",
+      "phone": "9629995539",
+      "email": "mohanpmp129@gmail.com",
+      "id": "XXIXxvK7CP4"
+    },
+    {
+      "name": "Raj",
+      "phone": "8667666265",
+      "email": "mohanpmp1129@gmail.com",
+      "id": "sy4cX5-mnJ4"
+    },
+    {
+      "name": "Praveen",
+      "phone": "8989809980",
+      "email": "praveen@gmail.com",
+      "id": "dEu3QSgzSa8"
+    }
+  ],
+  "scripts": {
+    "start": "json-server --watch js/db.json --port 3000"
+  },
+  "$schema": "./node_modules/json-server/schema.json"
+}
