@@ -1,148 +1,160 @@
-const API_URL = "http://localhost:3000/contacts";
+const STORAGE_KEY = 'contacts';
 
-async function getContacts() {
-
+function loadContacts() {
     try {
-
-        const response = await fetch(API_URL);
-        const contacts = await response.json();
-
-        displayContacts(contacts);
-
-    } catch (error) {
-        alert("Error fetching contacts");
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch (e) {
+        return [];
     }
+}
+
+function saveContacts(contacts) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+}
+
+function getContacts() {
+    displayContacts(loadContacts());
 }
 
 function displayContacts(contacts) {
-  const contactList = document.getElementById("contactList");
-  contactList.innerHTML = "";
+    const contactList = document.getElementById('contactList');
+    contactList.innerHTML = '';
 
-  contacts.forEach(contact => {
-    const li = document.createElement("li");
+    contacts.forEach(contact => {
+        const li = document.createElement('li');
+        li.className = 'contact-item';
 
-    const name = document.createElement("b");
-    name.textContent = contact.name;
-    li.appendChild(name);
-    li.appendChild(document.createElement("br"));
+        const meta = document.createElement('div');
+        meta.className = 'contact-meta';
 
-    li.appendChild(document.createTextNode(contact.phone));
-    li.appendChild(document.createElement("br"));
+        const name = document.createElement('div');
+        name.className = 'contact-name';
+        name.textContent = contact.name;
+        meta.appendChild(name);
 
-    li.appendChild(document.createTextNode(contact.email));
-    li.appendChild(document.createElement("br"));
-    li.appendChild(document.createElement("br"));
+        const phone = document.createElement('div');
+        phone.className = 'contact-phone';
+        phone.textContent = contact.phone;
+        meta.appendChild(phone);
 
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
-    delBtn.addEventListener("click", () => deleteContact(contact.id));
-    li.appendChild(delBtn);
+        li.appendChild(meta);
 
-    const updBtn = document.createElement("button");
-    updBtn.textContent = "Update";
-    updBtn.addEventListener("click", () => updateContact(contact.id));
-    li.appendChild(updBtn);
+        const actions = document.createElement('div');
+        actions.className = 'actions';
 
-    contactList.appendChild(li);
-  });
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => deleteContact(contact.id));
+        actions.appendChild(delBtn);
+
+        const updBtn = document.createElement('button');
+        updBtn.textContent = 'Update';
+        updBtn.addEventListener('click', () => updateContact(contact.id));
+        actions.appendChild(updBtn);
+
+        li.appendChild(actions);
+        contactList.appendChild(li);
+    });
 }
 
-async function addContact() {
+function showFormError(message) {
+    const err = document.getElementById('formError');
+    if (!err) return;
+    if (!message) {
+        err.style.display = 'none';
+        err.textContent = '';
+        return;
+    }
+    err.style.display = 'block';
+    err.textContent = message;
+}
 
-    const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
-    if (name === "" || phone === "" || email === "") {
-        alert("All fields required");
+function validatePhone(phone) {
+    return phone.replace(/\D/g, '').length >= 10;
+}
+
+function addContact() {
+    showFormError('');
+
+    const nameInput = document.getElementById('name');
+    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
+
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const email = emailInput.value.trim();
+
+    if (!name || !phone || !email) {
+        showFormError('All fields are required.');
         return;
     }
 
-    if (phone.length < 10) {
-        alert("Invalid phone number");
+    if (!validatePhone(phone)) {
+        showFormError('Enter a valid phone number (at least 10 digits).');
         return;
     }
 
-    const newContact = {
-        name,
-        phone,
-        email
-    };
-
-    try {
-
-        await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newContact)
-        });
-
-        getContacts();
-
-    } catch (error) {
-        alert("Error adding contact");
+    if (!validateEmail(email)) {
+        showFormError('Enter a valid email address.');
+        return;
     }
+
+    const contacts = loadContacts();
+    const newContact = { id: Date.now(), name, phone, email };
+    contacts.push(newContact);
+    saveContacts(contacts);
+
+    nameInput.value = phoneInput.value = emailInput.value = '';
+    getContacts();
 }
 
-async function deleteContact(id) {
+function deleteContact(id) {
+    const contacts = loadContacts().filter(c => c.id !== id);
+    saveContacts(contacts);
+    getContacts();
+}
 
-    try {
+function updateContact(id) {
+    const contacts = loadContacts();
+    const idx = contacts.findIndex(c => c.id === id);
+    if (idx === -1) return;
 
-        await fetch(`${API_URL}/${id}`, {
-            method: "DELETE"
-        });
+    const contact = contacts[idx];
+    const newName = prompt('Enter new name', contact.name);
+    if (newName === null) return;
+    const newPhone = prompt('Enter new phone', contact.phone);
+    if (newPhone === null) return;
+    const newEmail = prompt('Enter new email', contact.email);
+    if (newEmail === null) return;
 
-        getContacts();
-
-    } catch (error) {
-        alert("Error deleting contact");
+    if (!newName.trim() || !validatePhone(newPhone) || !validateEmail(newEmail)) {
+        alert('Invalid input. Update cancelled.');
+        return;
     }
+
+    contacts[idx] = { ...contact, name: newName.trim(), phone: newPhone.trim(), email: newEmail.trim() };
+    saveContacts(contacts);
+    getContacts();
 }
 
-async function updateContact(id) {
-
-    const newName = prompt("Enter new name");
-    const newPhone = prompt("Enter new phone");
-    const newEmail = prompt("Enter new email");
-
-    const updatedContact = {
-        name: newName,
-        phone: newPhone,
-        email: newEmail
-    };
-
-    try {
-
-        await fetch(`${API_URL}/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedContact)
-        });
-
-        getContacts();
-
-    } catch (error) {
-        alert("Error updating contact");
-    }
+function clearAll() {
+    if (!confirm('Clear all contacts? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    getContacts();
 }
 
-async function searchContact() {
-
-    const searchValue =
-        document.getElementById("search").value.toLowerCase();
-
-    const response = await fetch(API_URL);
-    const contacts = await response.json();
-
-    const filteredContacts = contacts.filter(contact =>
-        contact.name.toLowerCase().includes(searchValue)
-    );
-
-    displayContacts(filteredContacts);
+function searchContact() {
+    const searchValue = document.getElementById('search').value.toLowerCase();
+    const filtered = loadContacts().filter(c => c.name.toLowerCase().includes(searchValue));
+    displayContacts(filtered);
 }
 
-getContacts();
+document.addEventListener('DOMContentLoaded', () => {
+    const clearBtn = document.getElementById('clearAllBtn');
+    if (clearBtn) clearBtn.addEventListener('click', clearAll);
+    getContacts();
+});

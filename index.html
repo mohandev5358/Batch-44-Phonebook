@@ -13,11 +13,15 @@
         <input type="text" id="phone" placeholder="Enter Phone">
         <input type="email" id="email" placeholder="Enter Email">
 
-        <button onclick="addContact()">Add Contact</button>
+        <div style="display:flex;gap:10px;">
+            <button onclick="addContact()">Add Contact</button>
+            <button id="clearAllBtn" style="width:auto;background:#ef4444;">Clear All</button>
+        </div>
 
-        <br><br>
+        <br>
 
-        <input type="text" id="search" placeholder="Search by name" onkeyup="searchContact()">
+        <input type="text" id="search" placeholder="Search by name" onkeyup="searchContact()" class="search-row">
+        <div id="formError" style="color:#dc2626;margin-top:6px;display:none"></div>
 
         <ul id="contactList"></ul>
     </div>
